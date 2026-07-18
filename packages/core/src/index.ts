@@ -7,4 +7,6 @@ export * from "./ai-processing";
 export * from "./pricing";
 export * from "./bundling";
 export * from "./orders";
+export * from "./analysis";
+export * from "./recommendations";
 export * from "./mock-data";

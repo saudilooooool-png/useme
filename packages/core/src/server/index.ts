@@ -2,3 +2,4 @@
 // (Anthropic، واتساب) ويجب ألا تُستورَد داخل مكوّنات العميل.
 export * from "./ai-llm";
 export * from "./whatsapp";
+export * from "./recommendations-ai";
