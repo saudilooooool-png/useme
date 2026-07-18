@@ -12,8 +12,12 @@ export function PreviewScreen() {
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState<number | null>(null);
 
-  const offers = approved.filter((r) => r.type === "bundle" || r.type === "cross_sell");
-  const changes = approved.filter((r) => r.type === "edit" || r.type === "price");
+  const offers = approved.filter(
+    (r) => r.type === "bundle" || r.type === "cross_sell" || r.type === "seasonal" || r.type === "category"
+  );
+  const changes = approved.filter(
+    (r) => r.type === "edit" || r.type === "price" || r.type === "restock"
+  );
 
   async function publish() {
     setPublishing(true);
@@ -99,9 +103,17 @@ export function PreviewScreen() {
 
 function OfferPreview({ r }: { r: Recommendation }) {
   const d = r.detail;
-  const isBundle = r.type === "bundle";
-  const price = isBundle ? d.bundlePrice : d.proposedPrice;
-  const was = isBundle ? d.originalPrice : d.currentPrice;
+  const isCross = r.type === "cross_sell";
+  const price = isCross ? d.proposedPrice : d.bundlePrice;
+  const was = isCross ? d.currentPrice : d.originalPrice;
+  const badge =
+    r.type === "seasonal"
+      ? `عرض ${d.occasion ?? "موسمي"} 🗓`
+      : r.type === "category"
+      ? "حزمة فئة 🏷"
+      : isCross
+      ? `اشترِ + وفّر ${d.discountPct}% ⇄`
+      : "عرض حزمة 🎁";
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -114,12 +126,12 @@ function OfferPreview({ r }: { r: Recommendation }) {
       </div>
       <div className="p-4">
         <span className="rounded-full bg-rose-50 px-2 py-0.5 text-xs font-bold text-rose-600">
-          {isBundle ? "عرض حزمة 🎁" : `اشترِ + وفّر ${d.discountPct}% ⇄`}
+          {badge}
         </span>
         <h5 className="mt-2 font-bold text-slate-900">
-          {isBundle
-            ? d.productTitles.join(" + ")
-            : `${d.triggerTitle} + ${d.targetTitle} بسعر خاص`}
+          {isCross
+            ? `${d.triggerTitle} + ${d.targetTitle} بسعر خاص`
+            : d.productTitles.join(" + ")}
         </h5>
         <div className="mt-2 flex items-baseline gap-2">
           <span className="text-xl font-extrabold text-slate-900">{formatSAR(price ?? 0)}</span>

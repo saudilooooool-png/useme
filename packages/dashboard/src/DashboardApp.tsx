@@ -6,17 +6,25 @@ import { PlatformProvider, usePlatform } from "./PlatformContext";
 import { RecommendationsProvider, useReco } from "./RecommendationsContext";
 import { AnalysisScreen } from "./screens/AnalysisScreen";
 import { RecommendationsScreen } from "./screens/RecommendationsScreen";
+import { HistoryScreen } from "./screens/HistoryScreen";
 import { PreviewScreen } from "./screens/PreviewScreen";
 import { StoreDataScreen } from "./screens/StoreDataScreen";
 
-type TabId = "analysis" | "recommendations" | "preview" | "store";
+type TabId = "analysis" | "recommendations" | "history" | "preview" | "store";
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
   { id: "analysis", label: "التحليل", icon: "▦" },
   { id: "recommendations", label: "التوصيات", icon: "✦" },
+  { id: "history", label: "السجل والنتائج", icon: "◷" },
   { id: "preview", label: "المعاينة قبل النشر", icon: "◈" },
   { id: "store", label: "بيانات المتجر", icon: "▤" },
 ];
+
+/** اسم التاجر (محاكاة حساب لكل عميل). */
+const MERCHANTS: Record<PlatformId, string> = {
+  zid: "متجر التقنية الحديثة",
+  salla: "متجر الأصالة",
+};
 
 /** نقطة الدخول: كل تطبيق (زد/سلة) يركّب هذا المكوّن مع مُعرّف منصته. */
 export function DashboardApp({ platform }: { platform: PlatformId }) {
@@ -53,9 +61,15 @@ function DashboardShell() {
               <div className="text-xs text-white/80">طبقة ذكاء اصطناعي فوق متجرك</div>
             </div>
           </div>
-          <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-medium">
-            متصل ✓ · بيانات تجريبية
-          </span>
+          <div className="flex items-center gap-3">
+            <div className="text-end">
+              <div className="text-sm font-bold leading-tight">{MERCHANTS[platform.id]}</div>
+              <div className="text-xs text-white/80">حساب التاجر</div>
+            </div>
+            <span className="grid h-9 w-9 place-items-center rounded-full bg-white/20 font-bold">
+              {MERCHANTS[platform.id][5] ?? "م"}
+            </span>
+          </div>
         </div>
       </header>
 
@@ -83,6 +97,7 @@ function DashboardShell() {
 
         {tab === "analysis" && <AnalysisScreen />}
         {tab === "recommendations" && <RecommendationsScreen />}
+        {tab === "history" && <HistoryScreen />}
         {tab === "preview" && <PreviewScreen />}
         {tab === "store" && <StoreDataScreen />}
       </div>

@@ -1,10 +1,16 @@
 "use client";
 
-import { createContext, useCallback, useContext, useState } from "react";
-import type { PlatformId, Recommendation, RecommendationStatus } from "@distrios/core";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  pastRecommendations,
+  type PlatformId,
+  type Recommendation,
+  type RecommendationStatus,
+} from "@distrios/core";
 
 interface RecoContextValue {
   recommendations: Recommendation[];
+  history: Recommendation[];
   loading: boolean;
   loaded: boolean;
   aiPowered: boolean | null;
@@ -14,6 +20,8 @@ interface RecoContextValue {
 }
 
 const RecoContext = createContext<RecoContextValue | null>(null);
+
+type Decisions = Record<string, RecommendationStatus>;
 
 export function RecommendationsProvider({
   platform,
@@ -26,6 +34,32 @@ export function RecommendationsProvider({
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [aiPowered, setAiPowered] = useState<boolean | null>(null);
+  const [decisions, setDecisions] = useState<Decisions>({});
+
+  const storageKey = `distrios:${platform}:decisions`;
+  const history = useMemo(() => pastRecommendations(platform), [platform]);
+
+  // تحميل قرارات هذا التاجر المحفوظة (محاكاة حساب لكل عميل).
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) setDecisions(JSON.parse(saved) as Decisions);
+    } catch {
+      /* تجاهل */
+    }
+  }, [storageKey]);
+
+  const persist = useCallback(
+    (next: Decisions) => {
+      setDecisions(next);
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(next));
+      } catch {
+        /* تجاهل */
+      }
+    },
+    [storageKey]
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -39,25 +73,32 @@ export function RecommendationsProvider({
         recommendations: Recommendation[];
         aiPowered: boolean;
       };
-      setRecommendations(data.recommendations);
+      // تطبيق القرارات المحفوظة لهذا التاجر على التوصيات الجديدة.
+      setRecommendations(
+        data.recommendations.map((r) =>
+          decisions[r.id] ? { ...r, status: decisions[r.id] } : r
+        )
+      );
       setAiPowered(data.aiPowered);
       setLoaded(true);
     } finally {
       setLoading(false);
     }
-  }, [platform]);
+  }, [platform, decisions]);
 
-  const setStatus = useCallback((id: string, status: RecommendationStatus) => {
-    setRecommendations((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status } : r))
-    );
-  }, []);
+  const setStatus = useCallback(
+    (id: string, status: RecommendationStatus) => {
+      setRecommendations((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
+      persist({ ...decisions, [id]: status });
+    },
+    [decisions, persist]
+  );
 
   const approved = recommendations.filter((r) => r.status === "approved");
 
   return (
     <RecoContext.Provider
-      value={{ recommendations, loading, loaded, aiPowered, load, setStatus, approved }}
+      value={{ recommendations, history, loading, loaded, aiPowered, load, setStatus, approved }}
     >
       {children}
     </RecoContext.Provider>

@@ -41,6 +41,14 @@ export interface Content {
     sub: string;
     cards: { tag: string; title: string; desc: string; points: string[] }[];
   };
+  recoTypes: {
+    heading: string;
+    sub: string;
+    types: { icon: string; name: string; desc: string }[];
+    dashboardTitle: string;
+    dashboardDesc: string;
+    dashboardPoints: string[];
+  };
   pricing: {
     heading: string;
     sub: string;
@@ -145,6 +153,27 @@ export const CONTENT: Record<Lang, Content> = {
             "إرسال الفاتورة المتوافقة مع ZATCA",
           ],
         },
+      ],
+    },
+    recoTypes: {
+      heading: "توصيات ذكية بأنواع متعددة — أنت من يوافق",
+      sub: "طبقة ذكاء اصطناعي فوق متجرك الجاهز على زد/سلة: تحلّل بياناتك وتقترح إجراءات، وتوافق أنت قبل تطبيقها على المتجر.",
+      types: [
+        { icon: "🗓", name: "توصيات موسمية", desc: "عروض مرتبطة بالمناسبات (رمضان، الصيف، الجمعة البيضاء) في وقتها المثالي." },
+        { icon: "◈", name: "حزم منتجات", desc: "دمج منتجات تُشترى معًا بسعر مقترح يرفع متوسط قيمة السلة." },
+        { icon: "⇄", name: "خصومات تقاطعية", desc: "خصم على منتج عند شراء منتج آخر لتحريك المخزون الراكد." },
+        { icon: "⚠", name: "تنبيهات المخزون", desc: "تنبيه قبل نفاد المنتجات الرائجة لتفادي فقدان المبيعات." },
+        { icon: "🏷", name: "حزم حسب الفئة", desc: "تجميع منتجات من نفس التصنيف في حزمة موضوعية." },
+        { icon: "✎", name: "تحسين البيانات", desc: "اقتراح عناوين وأوصاف وتصنيفات أفضل للمنتجات ضعيفة الجودة." },
+        { icon: "﷼", name: "تحسين التسعير", desc: "اقتراح تعديلات سعرية مبنية على بيانات المبيعات والهوامش." },
+      ],
+      dashboardTitle: "لوحة خاصة لكل تاجر",
+      dashboardDesc: "كل تاجر لديه واجهته الخاصة التي تجمع كل ما يحتاجه لاتخاذ القرار:",
+      dashboardPoints: [
+        "تحليل بيانات متجره لحظيًا (بديل الإكسل)",
+        "سجلّ التوصيات السابقة والنتائج المتحقّقة منها",
+        "التوصيات الجديدة وحالتها: بانتظار التأكيد · تمت الموافقة · مرفوضة",
+        "معاينة الصفحة المقترحة كما يراها العميل قبل النشر",
       ],
     },
     pricing: {
@@ -257,6 +286,27 @@ export const CONTENT: Record<Lang, Content> = {
             "ZATCA-compliant invoice delivery",
           ],
         },
+      ],
+    },
+    recoTypes: {
+      heading: "Many smart recommendation types — you approve",
+      sub: "An AI layer on top of your ready Zid/Salla store: it analyzes your data and proposes actions, and you approve before anything is applied to the store.",
+      types: [
+        { icon: "🗓", name: "Seasonal", desc: "Occasion-based offers (Ramadan, summer, White Friday) at the perfect time." },
+        { icon: "◈", name: "Bundles", desc: "Merge frequently co-bought products at a proposed price to raise AOV." },
+        { icon: "⇄", name: "Cross-sell discounts", desc: "Discount one product when another is bought, to move blocked stock." },
+        { icon: "⚠", name: "Restock alerts", desc: "Warn before best-sellers run out so you don't lose sales." },
+        { icon: "🏷", name: "Category bundles", desc: "Group products from the same category into a themed bundle." },
+        { icon: "✎", name: "Data enhancement", desc: "Suggest better titles, descriptions, and categories for weak products." },
+        { icon: "﷼", name: "Pricing optimization", desc: "Data-driven price adjustments based on sales and margins." },
+      ],
+      dashboardTitle: "A dedicated dashboard per merchant",
+      dashboardDesc: "Every merchant gets their own interface with everything needed to decide:",
+      dashboardPoints: [
+        "Live analysis of their store data (an Excel alternative)",
+        "History of past recommendations and their realized results",
+        "New recommendations and status: pending · approved · rejected",
+        "Preview of the suggested customer page before publishing",
       ],
     },
     pricing: {

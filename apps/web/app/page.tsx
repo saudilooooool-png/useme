@@ -4,6 +4,7 @@ import { Stats } from "@/components/Stats";
 import { Features } from "@/components/Features";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Spotlight } from "@/components/Spotlight";
+import { RecoTypes } from "@/components/RecoTypes";
 import { CaseStudy } from "@/components/CaseStudy";
 import { Pricing } from "@/components/Pricing";
 import { FinalCta } from "@/components/FinalCta";
@@ -19,6 +20,7 @@ export default function HomePage() {
         <Features />
         <HowItWorks />
         <Spotlight />
+        <RecoTypes />
         <CaseStudy />
         <Pricing />
         <FinalCta />

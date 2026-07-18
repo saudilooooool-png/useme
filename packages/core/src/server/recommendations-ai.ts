@@ -26,7 +26,9 @@ const SYSTEM_PROMPT = `أنت مستشار تجارة إلكترونية للس�
 export async function recommendWithClaude(platform: PlatformId): Promise<RecommendResult> {
   const products = enrichBatch(RAW_PRODUCTS);
   const orders = mockOrders(platform);
-  const base = generateRecommendations(RAW_PRODUCTS, products, orders, platform);
+  const base = generateRecommendations(RAW_PRODUCTS, products, orders, platform, {
+    month: new Date().getMonth(),
+  });
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return { recommendations: base, aiPowered: false };

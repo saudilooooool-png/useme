@@ -5,8 +5,11 @@ import { formatSAR } from "@distrios/ui";
 import { useReco } from "../RecommendationsContext";
 
 const TYPE_META: Record<Recommendation["type"], { label: string; color: string; icon: string }> = {
+  seasonal: { label: "موسمية", color: "bg-rose-100 text-rose-700", icon: "🗓" },
   bundle: { label: "حزمة", color: "bg-brand-50 text-brand-700", icon: "◈" },
   cross_sell: { label: "خصم تقاطعي", color: "bg-amber-100 text-amber-700", icon: "⇄" },
+  restock: { label: "تنبيه مخزون", color: "bg-orange-100 text-orange-700", icon: "⚠" },
+  category: { label: "حزمة فئة", color: "bg-indigo-100 text-indigo-700", icon: "🏷" },
   edit: { label: "تحسين بيانات", color: "bg-sky-100 text-sky-700", icon: "✎" },
   price: { label: "تسعير", color: "bg-emerald-100 text-emerald-700", icon: "﷼" },
 };
@@ -14,7 +17,8 @@ const TYPE_META: Record<Recommendation["type"], { label: string; color: string; 
 export function RecommendationsScreen() {
   const { recommendations, loading, loaded, aiPowered, load, setStatus } = useReco();
   const pending = recommendations.filter((r) => r.status === "pending");
-  const decided = recommendations.filter((r) => r.status !== "pending");
+  const approved = recommendations.filter((r) => r.status === "approved");
+  const rejected = recommendations.filter((r) => r.status === "rejected");
 
   return (
     <div className="space-y-6">
@@ -23,6 +27,7 @@ export function RecommendationsScreen() {
           <h3 className="font-bold text-slate-900">توصيات الذكاء الاصطناعي</h3>
           <p className="text-sm text-slate-500">
             يحلّل الذكاء الاصطناعي بيانات متجرك ويقترح إجراءات — وافق أو ارفض كلًّا منها.
+            قراراتك محفوظة لحسابك.
           </p>
         </div>
         <button
@@ -33,6 +38,14 @@ export function RecommendationsScreen() {
           {loading ? "جارٍ التحليل…" : loaded ? "إعادة التحليل" : "حلّل متجري وولّد التوصيات"}
         </button>
       </div>
+
+      {loaded && (
+        <div className="grid grid-cols-3 gap-3">
+          <StatBox label="قيد الانتظار" value={pending.length} tone="amber" />
+          <StatBox label="تمت الموافقة" value={approved.length} tone="emerald" />
+          <StatBox label="مرفوضة" value={rejected.length} tone="rose" />
+        </div>
+      )}
 
       {loaded && aiPowered !== null && (
         <div
@@ -54,30 +67,77 @@ export function RecommendationsScreen() {
         </div>
       )}
 
-      {pending.map((r) => (
-        <RecoCard key={r.id} r={r} onApprove={() => setStatus(r.id, "approved")} onReject={() => setStatus(r.id, "rejected")} />
-      ))}
-
-      {decided.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="text-sm font-bold text-slate-400">تمّت مراجعتها</h4>
-          {decided.map((r) => (
-            <div
+      {pending.length > 0 && (
+        <Section title="قيد انتظار التأكيد">
+          {pending.map((r) => (
+            <RecoCard
               key={r.id}
-              className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 px-4 py-3 text-sm"
-            >
-              <span className="text-slate-700">{r.title}</span>
-              <span
-                className={`rounded-full px-2 py-0.5 text-xs font-bold ${
-                  r.status === "approved" ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"
-                }`}
-              >
-                {r.status === "approved" ? "معتمدة ✓" : "مرفوضة ✕"}
-              </span>
-            </div>
+              r={r}
+              onApprove={() => setStatus(r.id, "approved")}
+              onReject={() => setStatus(r.id, "rejected")}
+            />
           ))}
-        </div>
+        </Section>
       )}
+
+      {approved.length > 0 && (
+        <Section title="تمت الموافقة">
+          {approved.map((r) => (
+            <DecidedRow key={r.id} r={r} onUndo={() => setStatus(r.id, "pending")} />
+          ))}
+        </Section>
+      )}
+
+      {rejected.length > 0 && (
+        <Section title="مرفوضة">
+          {rejected.map((r) => (
+            <DecidedRow key={r.id} r={r} onUndo={() => setStatus(r.id, "pending")} />
+          ))}
+        </Section>
+      )}
+    </div>
+  );
+}
+
+function StatBox({ label, value, tone }: { label: string; value: number; tone: "amber" | "emerald" | "rose" }) {
+  const c = {
+    amber: "border-amber-200 text-amber-600",
+    emerald: "border-emerald-200 text-emerald-600",
+    rose: "border-rose-200 text-rose-600",
+  }[tone];
+  return (
+    <div className={`rounded-xl border bg-white p-4 text-center ${c}`}>
+      <div className="text-2xl font-extrabold">{value}</div>
+      <div className="text-xs text-slate-500">{label}</div>
+    </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-3">
+      <h4 className="text-sm font-bold text-slate-400">{title}</h4>
+      {children}
+    </div>
+  );
+}
+
+function DecidedRow({ r, onUndo }: { r: Recommendation; onUndo: () => void }) {
+  return (
+    <div className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 px-4 py-3 text-sm">
+      <span className="text-slate-700">{TYPE_META[r.type].icon} {r.title}</span>
+      <div className="flex items-center gap-3">
+        <span
+          className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+            r.status === "approved" ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"
+          }`}
+        >
+          {r.status === "approved" ? "معتمدة ✓" : "مرفوضة ✕"}
+        </span>
+        <button onClick={onUndo} className="text-xs text-slate-400 hover:text-slate-600">
+          تراجع
+        </button>
+      </div>
     </div>
   );
 }
@@ -126,12 +186,15 @@ function RecoCard({ r, onApprove, onReject }: { r: Recommendation; onApprove: ()
 
 function RecoDetail({ r }: { r: Recommendation }) {
   const d = r.detail;
-  if (r.type === "bundle" && d.bundlePrice != null) {
+  const isOfferLike = r.type === "bundle" || r.type === "seasonal" || r.type === "category";
+  if (isOfferLike && d.bundlePrice != null) {
     return (
       <div className="mt-3 flex items-baseline gap-3 rounded-lg bg-slate-50 p-3">
         <span className="text-lg font-extrabold text-slate-900">{formatSAR(d.bundlePrice)}</span>
         <span className="text-sm text-slate-400 line-through">{formatSAR(d.originalPrice ?? 0)}</span>
-        <span className="text-xs text-slate-500">سعر الحزمة المقترح</span>
+        <span className="text-xs text-slate-500">
+          سعر مقترح{d.occasion ? ` · ${d.occasion}` : ""}
+        </span>
       </div>
     );
   }
