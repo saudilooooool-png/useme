@@ -11,6 +11,9 @@
       "@distrios/core": [
         "../../packages/core/src/index.ts"
       ],
+      "@distrios/core/server": [
+        "../../packages/core/src/server/index.ts"
+      ],
       "@distrios/ui": [
         "../../packages/ui/src/index.ts"
       ],

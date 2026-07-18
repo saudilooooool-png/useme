@@ -36,6 +36,11 @@ export interface Content {
     author: string;
     metrics: { value: string; label: string }[];
   };
+  spotlight: {
+    heading: string;
+    sub: string;
+    cards: { tag: string; title: string; desc: string; points: string[] }[];
+  };
   pricing: {
     heading: string;
     sub: string;
@@ -114,6 +119,32 @@ export const CONTENT: Record<Lang, Content> = {
         { value: "+30%", label: "زيادة في الطلبات" },
         { value: "+37%", label: "زيادة في الإيرادات" },
         { value: "200 ساعة", label: "عمل يدوي تم توفيره" },
+      ],
+    },
+    spotlight: {
+      heading: "ذكاء اصطناعي حقيقي + واتساب مدمج",
+      sub: "ميزتان تصنعان الفرق في السوق السعودي: معالجة بيانات بنموذج لغوي حقيقي، وتواصل مباشر مع عملائك عبر واتساب.",
+      cards: [
+        {
+          tag: "AI",
+          title: "معالجة بيانات بنموذج Claude",
+          desc: "ليست قوالب جاهزة — بل نموذج لغوي حقيقي (Claude) يقرأ بياناتك الفوضوية ويكتب عناوين وأوصافًا عربية محسّنة لكل منتج.",
+          points: [
+            "عناوين وأوصاف SEO عربية أصيلة",
+            "استخراج تلقائي للسمات والتصنيفات",
+            "درجة جودة لكل منتج قبل النشر",
+          ],
+        },
+        {
+          tag: "WhatsApp",
+          title: "إشعارات واتساب تلقائية",
+          desc: "أبقِ عميلك على اطّلاع في كل خطوة عبر واتساب — القناة الأكثر استخدامًا في المملكة — من تأكيد الطلب حتى تسليمه.",
+          points: [
+            "تأكيد الطلب فور إنشائه",
+            "إشعار الشحن مع رقم تتبّع AWB",
+            "إرسال الفاتورة المتوافقة مع ZATCA",
+          ],
+        },
       ],
     },
     pricing: {
@@ -200,6 +231,32 @@ export const CONTENT: Record<Lang, Content> = {
         { value: "+30%", label: "more orders" },
         { value: "+37%", label: "more revenue" },
         { value: "200 hrs", label: "manual work saved" },
+      ],
+    },
+    spotlight: {
+      heading: "Real AI + built-in WhatsApp",
+      sub: "Two features that make the difference in the Saudi market: real LLM-powered data processing, and direct customer communication over WhatsApp.",
+      cards: [
+        {
+          tag: "AI",
+          title: "Claude-powered data processing",
+          desc: "Not canned templates — a real LLM (Claude) reads your messy data and writes optimized Arabic titles and descriptions for every product.",
+          points: [
+            "Authentic Arabic SEO titles & descriptions",
+            "Automatic attribute & category extraction",
+            "A quality score for every product before publishing",
+          ],
+        },
+        {
+          tag: "WhatsApp",
+          title: "Automatic WhatsApp notifications",
+          desc: "Keep your customer in the loop at every step over WhatsApp — the most-used channel in the Kingdom — from order confirmation to delivery.",
+          points: [
+            "Order confirmation on creation",
+            "Shipment notice with AWB tracking",
+            "ZATCA-compliant invoice delivery",
+          ],
+        },
       ],
     },
     pricing: {

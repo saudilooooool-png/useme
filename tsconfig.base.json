@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@distrios/core": ["packages/core/src/index.ts"],
+      "@distrios/core/server": ["packages/core/src/server/index.ts"],
       "@distrios/ui": ["packages/ui/src/index.ts"],
       "@distrios/dashboard": ["packages/dashboard/src/index.ts"],
       "@distrios/connectors": ["packages/connectors/src/index.ts"]

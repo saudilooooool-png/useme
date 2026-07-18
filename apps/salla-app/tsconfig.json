@@ -1,14 +1,35 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "baseUrl": ".",
     "paths": {
-      "@distrios/core": ["../../packages/core/src/index.ts"],
-      "@distrios/ui": ["../../packages/ui/src/index.ts"],
-      "@distrios/dashboard": ["../../packages/dashboard/src/index.ts"]
-    }
+      "@distrios/core": [
+        "../../packages/core/src/index.ts"
+      ],
+      "@distrios/core/server": [
+        "../../packages/core/src/server/index.ts"
+      ],
+      "@distrios/ui": [
+        "../../packages/ui/src/index.ts"
+      ],
+      "@distrios/dashboard": [
+        "../../packages/dashboard/src/index.ts"
+      ]
+    },
+    "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -6,14 +6,40 @@ import { formatSAR } from "@distrios/ui";
 import { usePlatform } from "../PlatformContext";
 import { statusLabel } from "./OverviewScreen";
 
+type WaEvent = "order_confirmed" | "order_shipped" | "invoice";
+interface WaState {
+  orderId: string;
+  message: string;
+  sent: boolean;
+}
+
 export function OrdersScreen() {
   const platform = usePlatform();
   const [orders, setOrders] = useState<Order[]>(() => mockOrders(platform.id));
+  const [wa, setWa] = useState<WaState | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
 
   function fulfill(id: string, index: number) {
     setOrders((prev) =>
       prev.map((o) => (o.id === id ? fulfillOrder(o, index + 1) : o))
     );
+  }
+
+  async function notify(order: Order, event: WaEvent) {
+    setBusy(`${order.id}:${event}`);
+    try {
+      const res = await fetch("/api/whatsapp/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: order.id, platform: platform.id, event }),
+      });
+      const data = (await res.json()) as { message: string; sent: boolean };
+      setWa({ orderId: order.id, message: data.message, sent: data.sent });
+    } catch {
+      setWa({ orderId: order.id, message: "تعذّر الاتصال بخدمة الواتساب.", sent: false });
+    } finally {
+      setBusy(null);
+    }
   }
 
   return (
@@ -22,7 +48,7 @@ export function OrdersScreen() {
         <h3 className="font-bold text-slate-900">الطلبات المركزية</h3>
         <p className="text-sm text-slate-500">
           كل الطلبات من {platform.nameAr} في مكان واحد. اضغط «تجهيز» لتوليد بوليصة الشحن (AWB)
-          والفاتورة المتوافقة مع «فاتورة» (ZATCA) تلقائيًا.
+          والفاتورة المتوافقة مع «فاتورة» (ZATCA)، ثم أرسل إشعارًا للعميل عبر واتساب.
         </p>
       </div>
 
@@ -63,10 +89,39 @@ export function OrdersScreen() {
                 )}
               </div>
             </div>
+
+            {/* أزرار إشعارات واتساب */}
+            <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
+              <span className="text-xs font-medium text-emerald-700">💬 إشعار واتساب:</span>
+              <WaButton label="تأكيد الطلب" active={busy === `${o.id}:order_confirmed`} onClick={() => notify(o, "order_confirmed")} />
+              <WaButton label="تم الشحن" active={busy === `${o.id}:order_shipped`} onClick={() => notify(o, "order_shipped")} />
+              <WaButton label="الفاتورة" active={busy === `${o.id}:invoice`} onClick={() => notify(o, "invoice")} />
+            </div>
+
+            {wa?.orderId === o.id && (
+              <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                <div className="mb-1 text-xs font-bold text-emerald-800">
+                  {wa.sent ? "✅ أُرسلت عبر واتساب" : "👁 معاينة الرسالة (وضع المحاكاة — اضبط WHATSAPP_TOKEN للإرسال الحقيقي)"}
+                </div>
+                <pre className="whitespace-pre-wrap font-sans text-sm text-slate-700">{wa.message}</pre>
+              </div>
+            )}
           </div>
         ))}
       </div>
     </div>
+  );
+}
+
+function WaButton({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={active}
+      className="rounded-full border border-emerald-300 bg-white px-3 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-50 disabled:opacity-50"
+    >
+      {active ? "…" : label}
+    </button>
   );
 }
 
