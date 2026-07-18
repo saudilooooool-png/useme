@@ -1,0 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --grid: rgba(99, 102, 241, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white text-ink antialiased;
+  font-feature-settings: "kern";
+}
+
+.hero-gradient {
+  background:
+    radial-gradient(60% 60% at 80% 0%, rgba(99, 102, 241, 0.16) 0%, transparent 60%),
+    radial-gradient(50% 50% at 10% 10%, rgba(79, 70, 229, 0.12) 0%, transparent 55%),
+    linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.card-hover {
+  @apply transition-all duration-300;
+}
+.card-hover:hover {
+  @apply -translate-y-1 shadow-soft;
+}

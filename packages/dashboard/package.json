@@ -1,0 +1,15 @@
+{
+  "name": "@distrios/dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@distrios/core": "*",
+    "@distrios/ui": "*"
+  },
+  "peerDependencies": {
+    "react": "^18",
+    "react-dom": "^18"
+  }
+}

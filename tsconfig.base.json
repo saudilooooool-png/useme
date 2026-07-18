@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "preserve",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowJs": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@distrios/core": ["packages/core/src/index.ts"],
+      "@distrios/ui": ["packages/ui/src/index.ts"],
+      "@distrios/dashboard": ["packages/dashboard/src/index.ts"],
+      "@distrios/connectors": ["packages/connectors/src/index.ts"]
+    }
+  }
+}

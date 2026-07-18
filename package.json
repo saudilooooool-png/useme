@@ -1,0 +1,20 @@
+{
+  "name": "distrios-sa",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DistriOS SA — منصة تجارة إلكترونية للموزّعين مع تطبيقَي زد وسلة",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=@distrios/web",
+    "dev:zid": "npm run dev --workspace=@distrios/zid-app",
+    "dev:salla": "npm run dev --workspace=@distrios/salla-app",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  }
+}
